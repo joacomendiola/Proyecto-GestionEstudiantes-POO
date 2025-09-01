@@ -1,0 +1,13 @@
+# Archivos de IntelliJ
+*.iml
+.idea/
+
+# Archivos compilados de Java
+*.class
+
+# Logs
+*.log
+
+# Otros temporales
+out/
+src/main/resources/config.properties
