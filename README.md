@@ -1,79 +1,168 @@
 <div align="center">
 
-# 🎓 Sistema de Gestión Académica
+# 🎓 Sistema de Gestión de Estudiantes
 
 ![Java](https://img.shields.io/badge/Java-17-red)
 ![POO](https://img.shields.io/badge/Paradigma-POO-blue)
-![SQL](https://img.shields.io/badge/Persistencia-SQL-4479A1)
-![DAO](https://img.shields.io/badge/Patrón-DAO-green)
+![Persistencia](https://img.shields.io/badge/Persistencia-MySQL-green)
+![Patrón](https://img.shields.io/badge/Patrón-DAO-yellow)
 ![Estado](https://img.shields.io/badge/Estado-Terminado-success)
 
-**Sistema académico con persistencia en base de datos SQL y patrón DAO**
+**Sistema académico con persistencia en MySQL y patrón DAO desarrollado en Java**
 
 </div>
 
 ---
 
 ## 📖 Descripción
-Sistema completo de gestión académica desarrollado en Java que administra **estudiantes, materias y calificaciones** con persistencia en base de datos SQL. Implementa el **patrón DAO** para separar la lógica de negocio del acceso a datos y aplica principios de **Programación Orientada a Objetos**.
+Sistema de gestión académica desarrollado en Java que administra **estudiantes** y sus **inscripciones a materias**.  
+Aplica principios de **POO** y utiliza el **patrón DAO** para separar la lógica de negocio del acceso a datos.  
+La persistencia se implementa con **MySQL** mediante JDBC y un archivo `config.properties`.
 
 ---
 
 ## ✨ Características
 
-- **👨‍🎓 Gestión de Estudiantes**: Registro completo con datos personales y académicos
-- **📚 Administración de Materias**: Catálogo de materias con códigos y descripciones
-- **📊 Sistema de Calificaciones**: Registro y cálculo de notas con validaciones
-- **💾 Persistencia en SQL**: Almacenamiento en base de datos relacional
-- **🏗️ Patrón DAO**: Separación clara entre lógica de negocio y acceso a datos
-- **📈 Reportes Académicos**: Promedios, materias aprobadas y estadísticas
+- **👩‍🎓 Gestión de Estudiantes**: Altas, bajas, modificaciones y consultas (CRUD completo).  
+- **📘 Inscripciones**: Asociación de estudiantes con materias ya cargadas en la base de datos.  
+- **📊 Reportes**: Consultas con JOIN usando vista SQL (`v_inscripciones`).  
+- **🗑️ Eliminación de duplicados**: Detección y eliminación de registros repetidos por datos.  
+- **💾 Persistencia en MySQL**: Conexión configurada vía `config.properties`.  
+- **⚡ Patrón DAO**: Acceso a datos desacoplado de la lógica de negocio.  
 
 ---
 
 ## 🏗️ Arquitectura del Sistema
 
 ### Capas implementadas:
-- **🎯 Capa de Presentación**: Interfaz de consola y menús
-- **⚙️ Capa de Negocio**: Lógica académica y reglas del dominio
-- **💾 Capa de Persistencia**: DAOs para acceso a base de datos
-- **🗄️ Base de Datos**: MySQL/PostgreSQL/SQLite
+- **Capa de Presentación**: `Main.java` (menú de consola).  
+- **Capa de Negocio**: `UniversidadService` y `UniversidadServiceImpl`.  
+- **Capa de Persistencia**: `EstudianteDAO` y `EstudianteDAOImpl`.  
+- **Reportes**: `ReporteRepository` e `InscripcionVista` para consultas con JOIN.  
+- **Base de Datos**: Scripts SQL incluidos (`creacion_tablas.sql` y `modificacion_relaciones.sql`).  
 
 ### Principios POO aplicados:
-- **🔷 Encapsulamiento**: Atributos privados con acceso controlado
-- **🔄 Polimorfismo**: Comportamientos específicos por entidad
-- **🔗 Composiciones**: Relaciones entre estudiantes y materias
-- **🎯 Interfaces**: Contratos para DAOs y servicios
+- **📦 Encapsulamiento**: Atributos privados con acceso controlado en `Estudiante`.  
+- **🔄 Polimorfismo**: Implementaciones concretas en el DAO y el servicio.  
+- **🎯 Interfaces**: Contratos para `EstudianteDAO` y `UniversidadService`.  
 
 ---
 
-## 🗄️ Estructura de Base de Datos
+## 🗄️ Base de Datos (MySQL)
 
-### Tablas principales:
+El proyecto incluye los scripts necesarios en la carpeta `sql/`:
+
+- `creacion_tablas.sql` → crea las tablas `estudiantes`, `materias` e `inscripciones`, además de la vista `v_inscripciones`.  
+- `modificacion_relaciones.sql` → actualiza claves foráneas con `CASCADE`.  
+
+👉 **Importante:** las **materias se crean directamente desde el script SQL** (no existe clase `Materia` en Java).
+
+Ejemplo de tabla `materias`:
+
 ```sql
--- Tabla de estudiantes
-CREATE TABLE estudiantes (
-    id INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    legajo VARCHAR(20) UNIQUE,
-    email VARCHAR(150)
-);
-
--- Tabla de materias  
 CREATE TABLE materias (
-    id INT PRIMARY KEY,
-    codigo VARCHAR(20) UNIQUE,
-    nombre VARCHAR(100),
-    descripcion TEXT
-);
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    creditos INT NOT NULL
+) ENGINE=InnoDB;
+```
 
--- Tabla de calificaciones
-CREATE TABLE calificaciones (
-    id INT PRIMARY KEY,
-    estudiante_id INT,
-    materia_id INT,
-    calificacion DECIMAL(4,2),
-    fecha DATE,
-    FOREIGN KEY (estudiante_id) REFERENCES estudiantes(id),
-    FOREIGN KEY (materia_id) REFERENCES materias(id)
+---
+
+## 📂 Estructura del Código
+
+```text
+Proyecto/
+├── sql/
+│   ├── creacion_tablas.sql
+│   └── modificacion_relaciones.sql
+│
+├── src/
+│   ├── app/
+│   │   └── Main.java
+│   │
+│   ├── dao/
+│   │   ├── impl/
+│   │   │   └── EstudianteDAOImpl.java
+│   │   ├── EstudianteDAO.java
+│   │   ├── InscripcionVista.java
+│   │   └── ReporteRepository.java
+│   │
+│   ├── main/
+│   │   └── resources/
+│   │       └── config.properties
+│   │
+│   ├── model/
+│   │   └── Estudiante.java
+│   │
+│   ├── service/
+│   │   ├── UniversidadService.java
+│   │   └── UniversidadServiceImpl.java
+│   │
+│   ├── test/
+│   │   └── Test.java
+│   │
+│   └── util/
+│       └── ConexionBD.java
+│
+├── .gitignore
+└── Proyecto.iml
+```
+
+---
+
+## ⚙️ Configuración
+
+En `src/main/resources/config.properties` se definen los parámetros de conexión a MySQL:
+
+```properties
+db.url=jdbc:mysql://localhost:3306/universidad?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+db.user=root
+db.pass=root1234
+```
+
+---
+
+## 💻 Ejemplo de Código
+
+### 🔹 CRUD de Estudiantes
+```java
+EstudianteDAO dao = new EstudianteDAOImpl();
+
+// Crear estudiante
+int id = dao.crear(new Estudiante("Juan Pérez", 21, "Ingeniería en Sistemas"));
+
+// Listar estudiantes
+dao.listar().forEach(System.out::println);
+
+// Buscar por ID
+dao.porId(id).ifPresent(System.out::println);
+
+// Actualizar
+Estudiante e = new Estudiante(id, "Juan Pérez", 22, "Informática");
+dao.actualizar(e);
+
+// Eliminar
+dao.eliminar(id);
+```
+
+### 🔹 Inscripción en Materias
+```java
+UniversidadService svc = new UniversidadServiceImpl();
+boolean ok = svc.inscribir(1, 2, LocalDate.now());
+System.out.println(ok ? "Inscripción realizada" : "No se pudo inscribir");
+```
+
+### 🔹 Reporte de Inscripciones
+```java
+ReporteRepository repo = new ReporteRepository();
+repo.listarInscripciones().forEach(iv ->
+    System.out.println(iv.estudiante() + " → " + iv.materia() + " (" + iv.fecha() + ")")
 );
+```
+
+---
+
+## 👨‍💻 Autor
+Desarrollado por **Joaquín Mendiola**  
+🌐 GitHub: [joacomendiola](https://github.com/joacomendiola)
