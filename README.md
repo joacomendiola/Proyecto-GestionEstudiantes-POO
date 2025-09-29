@@ -17,7 +17,9 @@
 ## 📖 Descripción
 Sistema de gestión académica desarrollado en Java que administra **estudiantes** y sus **inscripciones a materias**.  
 Aplica principios de **POO** y utiliza el **patrón DAO** para separar la lógica de negocio del acceso a datos.  
-La persistencia se implementa con **MySQL** mediante JDBC y un archivo `config.properties`.
+La persistencia se implementa con **MySQL** mediante JDBC y un archivo `config.properties`.  
+
+Este es un **proyecto personal de práctica**, realizado para profundizar en el uso de **DAO** y **MySQL** más allá de los contenidos vistos en la universidad.
 
 ---
 
